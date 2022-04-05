@@ -1,6 +1,7 @@
 class Bot {
-    getCommandIdentifier() {
-        return ""
-    }
+  getCommandIdentifier () {
+    return ''
+  }
 }
+
 module.exports = Bot
