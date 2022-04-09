@@ -6,6 +6,7 @@ const JoaoBot = require('./users/joao-bot.js')
 const InstantsBot = require('./misc/instants/instants-bot.js')
 const VazaBot = require('./config/vaza-bot.js')
 const WorldCupCounterBot = require('./misc/world-cup/world-cup-counter-bot.js')
+const RoletaRussaBot = require('./config/roleta-russa-bot')
 
 // Users
 const babyBot = new BabyBot()
@@ -19,6 +20,7 @@ const worldCupCounterBot = new WorldCupCounterBot()
 
 // Config
 const vazaBot = new VazaBot()
+const roletaRussaBot = new RoletaRussaBot()
 
 // Comentário Sev: "O Batman"
 class BotManager {
@@ -65,6 +67,9 @@ class BotManager {
           break
         case worldCupCounterBot.getCommandIdentifier():
           worldCupCounterBot.startConfig(this.client, message, args)
+          break
+        case roletaRussaBot.getCommandIdentifier():
+          roletaRussaBot.startConfig(this.client, message, args)
           break
       }
     }
