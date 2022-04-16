@@ -1,4 +1,4 @@
-const dotenv = require('dotenv')
+require('dotenv').config()
 const BabyBot = require('./users/baby-bot.js')
 const IgorBot = require('./users/igor-bot.js')
 const VictorBot = require('./users/victor-bot.js')
@@ -8,29 +8,46 @@ const VazaBot = require('./config/vaza-bot.js')
 const WorldCupCounterBot = require('./misc/world-cup/world-cup-counter-bot.js')
 const RoletaRussaBot = require('./config/roleta-russa-bot')
 
-// Users
-const babyBot = new BabyBot()
-const igorBot = new IgorBot()
-const victorBot = new VictorBot()
-const joaoBot = new JoaoBot()
-
-// Misc
-const instantsBot = new InstantsBot()
-const worldCupCounterBot = new WorldCupCounterBot()
-
-// Config
-const vazaBot = new VazaBot()
-const roletaRussaBot = new RoletaRussaBot()
-
 // Comentário Sev: "O Batman"
 class BotManager {
+  constructor (client) {
+    this.client = client
+
+    this.bots = [
+      // Users
+      new BabyBot(client),
+      new IgorBot(client),
+      new VictorBot(client),
+      new JoaoBot(client),
+
+      // Misc
+      new InstantsBot(client),
+      new WorldCupCounterBot(client),
+
+      // Config
+      new VazaBot(client),
+      new RoletaRussaBot(client)
+    ].reduce(function (map, bot) {
+      map[bot.command] = bot
+      return map
+    }, {})
+
+    client.on('ready', () => {
+      this.handleStart()
+    })
+
+    client.on('messageCreate', (message) => {
+      this.handleMessage(message, this.bots)
+    })
+
+    client.login(this.authToken)
+  }
+
   get authToken () {
-    dotenv.config()
     return process.env.DISCORD_AUTH_TOKEN
   }
 
-  handleStart (client) {
-    this.client = client
+  handleStart () {
     console.log('Connected')
     // client.user.setAvatar('./resources/img/profile-image.jpeg');
   }
@@ -46,32 +63,11 @@ class BotManager {
 
       args = args.splice(1)
       console.log(cmd)
-      switch (cmd) {
-        case babyBot.getCommandIdentifier():
-          babyBot.sendRandomMessage(this.client, message, args)
-          break
-        case igorBot.getCommandIdentifier():
-          igorBot.sendRandomMessage(this.client, message, args)
-          break
-        case victorBot.getCommandIdentifier():
-          victorBot.sendRandomMessage(this.client, message, args)
-          break
-        case joaoBot.getCommandIdentifier():
-          joaoBot.sendRandomMessage(this.client, message, args)
-          break
-        case instantsBot.getCommandIdentifier():
-          instantsBot.findInstants(message, args)
-          break
-        case vazaBot.getCommandIdentifier():
-          vazaBot.startConfig(this.client, message, args)
-          break
-        case worldCupCounterBot.getCommandIdentifier():
-          worldCupCounterBot.startConfig(this.client, message, args)
-          break
-        case roletaRussaBot.getCommandIdentifier():
-          roletaRussaBot.startConfig(this.client, message, args)
-          break
-      }
+
+      const bot = this.bots[cmd]
+      if (bot === undefined) return
+
+      bot.handleMessage(message, args)
     }
   }
 }

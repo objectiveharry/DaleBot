@@ -13,14 +13,4 @@ const client = new Client({
     Intents.FLAGS.GUILD_VOICE_STATES
   ]
 })
-const bot = new BotManager()
-
-client.on('ready', () => {
-  bot.handleStart(client)
-})
-
-client.on('messageCreate', (message) => {
-  bot.handleMessage(message)
-})
-
-client.login(bot.authToken)
+new BotManager(client)

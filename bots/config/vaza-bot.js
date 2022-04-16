@@ -2,11 +2,11 @@ const Bot = require('../bot.js')
 const { getVoiceConnection } = require('@discordjs/voice')
 
 class VazaBot extends Bot {
-  getCommandIdentifier () {
-    return 'vaza'
+  constructor (client) {
+    super(client, 'vaza')
   }
 
-  startConfig (client, message, args) {
+  handleMessage (client, message, args) {
     this.leaveVoiceChannel(message)
   }
 

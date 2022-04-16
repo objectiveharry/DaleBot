@@ -11,13 +11,9 @@ const {
 } = require('@discordjs/voice')
 
 class InstantsBot extends Bot {
-  constructor () {
-    super()
+  constructor (client) {
+    super(client, 'instant')
     this.player = createAudioPlayer()
-  }
-
-  getCommandIdentifier () {
-    return 'instant'
   }
 
   instantSearchQuery (args) {
@@ -34,7 +30,7 @@ class InstantsBot extends Bot {
     return !!pattern.test(str)
   }
 
-  findInstants (message, args) {
+  handleMessage (message, args) {
     const query = this.instantSearchQuery(args)
     if (query == null) {
       return
