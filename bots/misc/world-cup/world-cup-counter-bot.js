@@ -1,4 +1,4 @@
-const Bot = require('../../bot.js')
+const Bot = require('../../default-bots/bot.js')
 
 class WorldCupCounterBot extends Bot {
   constructor (client) {

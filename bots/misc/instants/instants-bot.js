@@ -1,19 +1,9 @@
-const Bot = require('../../bot.js')
 const request = require('request')
-const {
-  joinVoiceChannel,
-  entersState,
-  createAudioPlayer,
-  createAudioResource,
-  StreamType,
-  AudioPlayerStatus,
-  VoiceConnectionStatus
-} = require('@discordjs/voice')
+const AudioBot = require('../../default-bots/audio-bot.js')
 
-class InstantsBot extends Bot {
+class InstantsBot extends AudioBot {
   constructor (client) {
     super(client, 'instant')
-    this.player = createAudioPlayer()
   }
 
   instantSearchQuery (args) {
@@ -60,17 +50,20 @@ class InstantsBot extends Bot {
       return
     }
 
-    const pattern = /onmousedown="play\('(.*?)'\)"/g
+    const pattern = /onclick="play\('(.*?)'\)"/g
     const results = body.match(pattern)
-    this.sendVoiceMessage(message, results)
+    console.log(results)
+    this.formatUrl(message, results)
   }
 
-  sendVoiceMessage (message, instant) {
-    if (instant == null) {
+  formatUrl (message, instant) {
+    if (instant === null) {
       return
     }
+
     console.log(instant)
-    let pattern = /onmousedown="play\('/
+
+    let pattern = /onclick="play\('/
     let name = instant[0].replace(pattern)
     pattern = /'\)"/
     // There is a better way to handle that. I need better reg exp
@@ -79,28 +72,9 @@ class InstantsBot extends Bot {
     name = name.replace('undefined', '')
     name = name.replace('undefined', '')
 
-    const connection = joinVoiceChannel({
-      channelId: message.member.voice.channel.id,
-      guildId: message.guild.id,
-      adapterCreator: message.guild.voiceAdapterCreator
-    })
-
-    entersState(connection, VoiceConnectionStatus.Ready, 30e3)
-
     const url = 'https://www.myinstants.com' + name
 
-    console.log(url)
-
-    const resource = createAudioResource(url,
-      {
-        inputType: StreamType.Arbitrary
-      })
-
-    this.player.play(resource)
-
-    entersState(this.player, AudioPlayerStatus.Playing, 5e3)
-
-    connection.subscribe(this.player)
+    super.sendVoiceMessage(message, url)
   }
 }
 

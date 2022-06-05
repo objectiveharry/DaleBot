@@ -7,6 +7,7 @@ const InstantsBot = require('./misc/instants/instants-bot.js')
 const VazaBot = require('./config/vaza-bot.js')
 const WorldCupCounterBot = require('./misc/world-cup/world-cup-counter-bot.js')
 const RoletaRussaBot = require('./config/roleta-russa-bot')
+const FaroBot = require('./misc/rodrigo-faro/faro-bot')
 
 // Comentário Sev: "O Batman"
 class BotManager {
@@ -23,6 +24,7 @@ class BotManager {
       // Misc
       new InstantsBot(client),
       new WorldCupCounterBot(client),
+      new FaroBot(client),
 
       // Config
       new VazaBot(client),

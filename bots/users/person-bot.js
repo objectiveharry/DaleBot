@@ -1,26 +1,56 @@
-const Bot = require('../bot.js')
+require('dotenv').config()
+const Bot = require('../default-bots/bot.js')
 const utils = require('../helpers/utils.js')
+const { Client } = require('pg')
 
 class PersonBot extends Bot {
-  constructor (client, command, name, phrases) {
+  constructor (client, command, name) {
     super(client, command)
-    this.phrases = phrases
     this.name = name
+    this.dbCredentials = {
+      connectionString: process.env.DB_CONNECTION,
+      ssl: {
+        rejectUnauthorized: false
+      }
+    }
   }
 
   handleMessage (message, args) {
-    const items = this.phrases
-    const newMessage = utils.getRandomFromArray(items)
+    this.getTableData(message, args)
+  }
+
+  sendMessage (message, args, phrases) {
+    const newMessage = utils.getRandomFromArray(phrases)
 
     const that = this
-    message.guild.me.setNickname(that.name)
-      .then(user => { message.channel.send(newMessage, that.formatOptions(args)) })
+    super.setNickname(message, that.name)
+      .then(user => {
+        super.sendTextMessage(message,
+          newMessage,
+          that.formatOptions(args))
+      })
       .catch(err => { console.log('Error on sending message', err) })
   }
 
   formatOptions (args) {
     const tts = args.includes('tts')
     return { tts: tts }
+  }
+
+  async getTableData (message, args) {
+    const dbClient = new Client(this.dbCredentials)
+    await dbClient.connect()
+
+    const query = "SELECT frase from Palhassada where otario = '{0}'".format(this.command)
+    const results = await dbClient.query(query)
+
+    const items = results.rows.map(function (row) {
+      return row.frase
+    })
+
+    this.sendMessage(message, args, items)
+
+    await dbClient.end()
   }
 }
 
