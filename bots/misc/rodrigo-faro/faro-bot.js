@@ -3,7 +3,7 @@ const AudioBot = require('../../default-bots/audio-bot.js')
 class FaroBot extends AudioBot {
   constructor (client) {
     super(client, 'faro')
-//vai se fuder sev
+    
     this.commands = [
       {
         key: 'uepa',
