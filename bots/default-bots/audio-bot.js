@@ -8,6 +8,7 @@ const {
     VoiceConnectionStatus
   } = require('@discordjs/voice');
   const Bot = require('./bot.js');
+  const ytdl = require('ytdl-core');
   
   class AudioBot extends Bot {
     constructor (client, command) {
@@ -23,8 +24,12 @@ const {
       })
   
       entersState(connection, VoiceConnectionStatus.Ready, 30e3)
-  
-      console.log(url)
+
+      if (url.includes("youtube.com")) {
+          url = ytdl(url);
+      }
+
+      console.log(url);
   
       const resource = createAudioResource(url,
         {

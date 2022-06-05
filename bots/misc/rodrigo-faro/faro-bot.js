@@ -188,32 +188,47 @@ class FaroBot extends AudioBot {
     ]
   }
 
+  ajuda(message) {
+    super.sendTextMessage(message, 'Se liga nos comandos');
+    const allCommands = this.commands.map(element => {
+return element.key
+    }).join().replaceAll(",", "\n");
+    console.log(allCommands);
+    super.sendTextMessage(message, allCommands);
+  }
+
   handleMessage (message, args) {
     const command = args[0]
 
     if (command === null) {
       console.log('Xiiiiii é brincadeira')
-      super.sendTextMessage(message, 'Deu erro ai doidão')
+      super.sendTextMessage(message, 'Deu erro no comando doidão');
+      this.ajuda(message);
       return
     }
 
-    console.log(command)
+    console.log(command);
+
+    if (command.toLowerCase() === "ajuda") {
+this.ajuda(message);
+return
+    }
 
     const reaction = this.commands.find(element => {
       return element.key === command
     })
 
-    console.log(reaction)
+    console.log(reaction);
 
     if (reaction === null || reaction === undefined) {
-      console.log('Coé doidão')
-      super.sendTextMessage(message, 'Escolhe o negócio direito')
+      console.log('Coé doidão');
+      super.sendTextMessage(message, 'Escolhe o negócio direito');
       return
     }
 
-    super.setNickname(message, 'Hora do Faro')
-    super.sendTextMessage(message, reaction.message)
-    super.sendVoiceMessage(message, reaction.url)
+    super.setNickname(message, 'Hora do Faro');
+    super.sendTextMessage(message, reaction.message);
+    super.sendVoiceMessage(message, reaction.url);
   }
 }
 
